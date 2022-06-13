@@ -38,14 +38,14 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
-    { Déclarations privées }
+    { DÃ©clarations privÃ©es }
     MPApplication : IMathcadPrimeApplication3;
     MPWorksheet : IMathcadPrimeWorksheet3;
     MPEvents : IMathcadPrimeEvents2;
 
     FConnectionToken: integer;
   public
-    { Déclarations publiques }
+    { DÃ©clarations publiques }
   end;
 
 var
@@ -63,7 +63,6 @@ if (MPApplication <> nil) then
    begin
       try
       MPApplication.Quit(SaveOption_spSaveChanges);
-      //              ReleaseComObjects();
       except
       ShowMessage('Can not close Mathcad Prime, make sure it is actually running');
       end;
@@ -116,18 +115,22 @@ OpenDialog : TOpenDialog;
 begin
 if (MPApplication = nil) then Exit;
 
-OpenDialog := TOpenDialog.Create(Self);
-OpenDialog.Filter := 'MCDX files (*.mcdx)|.mcdx|All files (*.*)|*.*';
-OpenDialog.FilterIndex := 2;
+  try
+  OpenDialog := TOpenDialog.Create(Self);
+  OpenDialog.Filter := 'MCDX files (*.mcdx)|.mcdx|All files (*.*)|*.*';
+  OpenDialog.FilterIndex := 2;
 
-if OpenDialog.Execute then
-   begin
+  if OpenDialog.Execute then
+    begin
       try
       MPWorksheet := MPApplication.Open(OpenDialog.FileName) as IMathcadPrimeWorksheet3;
       except
       ShowMessage('Couldn''t open Mathcad Prime file. Please check that Mathcad Prime is running and you have proper permissions');
       end;
-   end;
+    end;
+  finally
+  OpenDialog.Free;
+  end;
 end;  
 
 procedure TMainForm.BtnSaveAsMctxClick(Sender: TObject);
@@ -140,18 +143,22 @@ if (MPApplication = nil) then Exit;
 if (MPWorksheet = nil) then
 ShowMessage('There is no selected worksheet: use ''Get Active Worksheet''');
 
-SaveDialog := TSaveDialog.Create(Self);
-SaveDialog.DefaultExt := 'mctx';
-SaveDialog.Filter := 'MCTX files (*.mctx)|.mctx';
+  try
+  SaveDialog := TSaveDialog.Create(Self);
+  SaveDialog.DefaultExt := 'mctx';
+  SaveDialog.Filter := 'MCTX files (*.mctx)|.mctx';
 
-if SaveDialog.Execute then
-   begin
+  if SaveDialog.Execute then
+    begin
       try
       MPWorksheet.SaveAs(SaveDialog.FileName);
       except
       ShowMessage('Unable to save worksheet. Please check permissions');
       end;
-   end;
+    end;
+  finally
+  SaveDialog.Free;
+  end;
 end;
 
 procedure TMainForm.BtnSaveAsWorskheetClick(Sender: TObject);
@@ -166,19 +173,23 @@ if (MPWorksheet = nil) then
    ShowMessage('There is no selected worksheet: use ''Get Active Worksheet''');
    Exit;
    end;
-     
-SaveDialog := TSaveDialog.Create(Self);
-SaveDialog.DefaultExt := 'mcdx';
-SaveDialog.Filter := 'MCDX files (*.mcdx)|.mcdx|All files (*.*)|*.*';
 
-if SaveDialog.Execute then
-   begin
+  try
+  SaveDialog := TSaveDialog.Create(Self);
+  SaveDialog.DefaultExt := 'mcdx';
+  SaveDialog.Filter := 'MCDX files (*.mcdx)|.mcdx|All files (*.*)|*.*';
+
+  if SaveDialog.Execute then
+    begin
       try
       MPWorksheet.SaveAs(SaveDialog.FileName);
       except
       ShowMessage('Unable to save worksheet. Please check permissions');
       end;
-   end;
+    end;
+  finally
+  SaveDialog.Free;
+  end;
 end;
 
 procedure TMainForm.BtnSaveWorksheetClick(Sender: TObject);
@@ -240,9 +251,13 @@ end;
 
 procedure TMainForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-InterfaceDisconnect(MPApplication, IMathcadPrimeApplication3, FConnectionToken);
-MPApplication := nil;
-MPEvents := nil;
+   try
+   InterfaceDisconnect(MPApplication, IMathcadPrimeApplication3, FConnectionToken);
+   MPApplication := nil;
+   MPEvents := nil;
+   except
+   Close;
+   end;
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
