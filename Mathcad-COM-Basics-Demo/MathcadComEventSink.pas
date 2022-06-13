@@ -3,7 +3,7 @@ unit MathcadComEventSink;
 interface
 
 uses
- Winapi.Windows, //mscorlib_TLB,
+ Winapi.Windows, 
  System.Classes, System.SysUtils, System.Variants, System.Win.StdVCL, Vcl.Graphics, Vcl.OleServer, Winapi.ActiveX, Ptc_MathcadPrime_Automation_TLB, Vcl.Dialogs;
 
 
@@ -39,10 +39,6 @@ type
     function OnWorksheetRequestToUpdateInputs(const documentFullNameArg: WideString;
                                               const documentNameArg: WideString;
                                               const setterArg: IMathcadPrimeValuesSetter): HResult; stdcall;
-
-    function QueryInterface(const IID: TGUID; out Obj): HResult; stdcall;
-    function _AddRef: Integer; stdcall;
-    function _Release: Integer; stdcall;
 
     constructor Create;
 
@@ -125,24 +121,6 @@ function TMathcadPrimeEvents.OnWorksheetStatesGenerating(
   operationsArg: WorksheetOperations;
   const itemsStatesArg: IMathcadPrimeInputsOutputsStates;
   const conflictsArg: IMathcadPrimeInputsOutputsConflicts): HResult;
-begin
-
-end;
-
-
-function TMathcadPrimeEvents.QueryInterface(const IID: TGUID; out Obj): HResult;
-begin
-if GetInterface(IID, Obj) then Result := S_Ok
-else if IsEqualIID(IID, IMathcadPrimeEvents2) then Result := QueryInterface(IUnknown, Obj)
-else Result := E_NOINTERFACE;
-end;
-
-function TMathcadPrimeEvents._AddRef: Integer;
-begin
-
-end;
-
-function TMathcadPrimeEvents._Release: Integer;
 begin
 
 end;
