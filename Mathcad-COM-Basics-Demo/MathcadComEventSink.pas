@@ -3,8 +3,9 @@ unit MathcadComEventSink;
 interface
 
 uses
- Winapi.Windows, 
- System.Classes, System.SysUtils, System.Variants, System.Win.StdVCL, Vcl.Graphics, Vcl.OleServer, Winapi.ActiveX, Ptc_MathcadPrime_Automation_TLB, Vcl.Dialogs;
+ Winapi.Windows, System.Classes, System.SysUtils, System.Variants,
+ System.Win.StdVCL, Vcl.Graphics, Vcl.OleServer, Winapi.ActiveX, 
+ Ptc_MathcadPrime_Automation_TLB, Vcl.Dialogs;
 
 
 
